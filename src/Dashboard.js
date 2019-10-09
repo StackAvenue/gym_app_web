@@ -1,19 +1,21 @@
 import React, { Component } from 'react';
 import { Link,  withRouter, BrowserRouter as Router } from "react-router-dom";
-import { Button, Navbar, NavItem, Nav, NavDropdown, FormControl, Form } from 'react-bootstrap'
-import { MDBNavbar, MDBNavbarNav, MDBNavbarBrand, MDBNavItem, MDBNavLink, MDBNavbarToggler, MDBCollapse, MDBDropdown,
-MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem, MDBIcon } from "mdbreact";
-import Signin from './Signin';
+import { Button, FormControl, Form } from 'react-bootstrap'
+import { MDBNavbar, MDBNavbarNav, MDBNavItem, MDBNavbarToggler, MDBCollapse, MDBDropdown,
+MDBDropdownToggle, MDBDropdownMenu, MDBIcon } from "mdbreact";
+import UserDetails from './UserDetails';
+
 
 class Dashboard extends Component {
   constructor(props) {
     super(props);
-    // console.log('at dashboard')
     this.userData = JSON.parse(localStorage.getItem("userData"));
+    this.onButtonClick = this.onButtonClick.bind(this);
   }
 
   state = {
-    isOpen: false
+    isOpen: false,
+    showAddBtn: false
   };
 
   toggleCollapse = () => {
@@ -31,10 +33,23 @@ class Dashboard extends Component {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
+  onButtonClick = () => {
+    this.setState({
+      showAddBtn: true,
+    });
+  }
+
+  removeUserDetailForm = () => {
+    console.log('removeUserDetailForm')
+    if(this.state.showAddBtn){
+      this.setState({ showAddBtn: false });
+    }
+  }
+
   render() {
     return (
       <Router>
-        <div className="container">  
+        <div>
           <MDBNavbar color="default-color" dark expand="md">
             <MDBNavbarToggler onClick={this.toggleCollapse} />
             <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
@@ -59,6 +74,8 @@ class Dashboard extends Component {
               </MDBNavbarNav>
             </MDBCollapse>
           </MDBNavbar>
+          <Button className="btn btn-md btn-primary" onClick={this.onButtonClick}>Add User Details</Button>
+          {this.state.showAddBtn ? <UserDetails removeUserDetail={this.removeUserDetailForm} /> : null}
         </div>
       </Router>
     );
