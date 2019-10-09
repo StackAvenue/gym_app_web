@@ -9,4 +9,8 @@
     margin: 0 auto;
     max-width: 320px;
   }
+  .ErrorMessage {
+    color: red;
+    font-size: 18px;
+  }
 }

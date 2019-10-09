@@ -23,7 +23,8 @@ class Dashboard extends Component {
   logout = async () => {
     console.log('at dashboard')
     localStorage.removeItem("userData");
-    this.props.history.push("/login");
+    // this.props.history.push("/login");
+    window.location.reload();
   };
 
   capitalize(str){

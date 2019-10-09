@@ -3,6 +3,7 @@ import { Form, Button, FormGroup, FormControl, FormLabel } from "react-bootstrap
 import { Link, withRouter } from "react-router-dom";
 import Bootstrap from "react-bootstrap";
 import Signin from './Signin';
+import FormErrors from './FormErrors';
 import "./sign.css";
 
 class Signup extends React.Component {
@@ -13,18 +14,54 @@ class Signup extends React.Component {
       last_name: "",
       email: "",
       password: "",
-      password_confirmation: ""
+      confPasswordValid: "",
+      formErrors: { email: '', password: '', password_confirmation: '' },
+      emailValid: false,
+      passwordValid: false,
+      formValid: false
     };
   }
 
   validateForm() {
-    return this.state.email.length > 0 && this.state.password.length > 0 && this.state.first_name.length > 0 && this.state.last_name.length > 0;
+    this.setState({ formValid: this.state.emailValid && this.state.passwordValid && this.state.confPasswordValid && this.state.first_name.length > 0 && this.state.last_name.length > 0
+     });
+  }
+
+  validateField(fieldName, value) {
+    let fieldValidationErrors = this.state.formErrors;
+    let emailValid = this.state.emailValid;
+    let passwordValid = this.state.passwordValid;
+    let confPasswordValid = this.state.confPasswordValid;
+    
+    switch(fieldName) {
+      case 'email':
+        emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+        fieldValidationErrors.email = emailValid ? '' : 'please enter valid email';
+        break;
+      case 'password':
+        passwordValid = value.length >= 8;
+        fieldValidationErrors.password = passwordValid ? '' : 'password is too short';
+        break;
+      case 'password_confirmation':
+        confPasswordValid = this.state.password === value
+        fieldValidationErrors.password_confirmation = confPasswordValid ? '' : 'password and confirmation password not match';
+      default:
+        break;
+    }
+    this.setState({ formErrors: fieldValidationErrors,
+                    emailValid: emailValid,
+                    passwordValid: passwordValid,
+                    confPasswordValid: confPasswordValid
+                  }, this.validateForm);
   }
 
   handleChange = event => {
-    this.setState({
-      [event.target.id]: event.target.value
-    });
+    const name = event.target.id
+    const value = event.target.value
+    this.setState(
+      {[name]: value },
+      () => { this.validateField(name, value) }
+    );
   }
 
   handleSubmit = event => {
@@ -52,6 +89,7 @@ class Signup extends React.Component {
 	      console.log(error);
 	   });
   }
+
 	render() {
     return (
       <div className="Login">
@@ -64,12 +102,12 @@ class Signup extends React.Component {
 
           <FormGroup controlId="last_name" bsSize="large">
             <FormLabel>Last Name</FormLabel>
-            <FormControl autoFocus type="last_name" value={this.state.last_name} onChange={this.handleChange} />
+            <FormControl type="last_name" value={this.state.last_name} onChange={this.handleChange} />
           </FormGroup>
 
           <FormGroup controlId="email" bsSize="large">
             <FormLabel>Email</FormLabel>
-            <FormControl autoFocus type="email" value={this.state.email} onChange={this.handleChange} />
+            <FormControl type="email" value={this.state.email} onChange={this.handleChange} />
           </FormGroup>
 
           <FormGroup controlId="password" bsSize="large">
@@ -81,8 +119,10 @@ class Signup extends React.Component {
             <FormLabel>Confirm Password</FormLabel>
             <FormControl value={this.state.password_confirmation} onChange={this.handleChange} type="password" />
           </FormGroup>
-
-          <Button block bsSize="large" disabled={!this.validateForm()} type="submit">
+          <div className="ErrorMessage">
+            <FormErrors formErrors={this.state.formErrors} />
+          </div>
+          <Button block bsSize="large" disabled={!this.state.formValid} type="submit">
             Sign Up 
           </Button>
 
