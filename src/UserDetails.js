@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 import FormErrors from './FormErrors';
 import "./sign.css";
 
+
 class UserDetails extends React.Component {
     constructor(props) { 
         super(props);
@@ -72,20 +73,20 @@ class UserDetails extends React.Component {
         axios.post(apiBaseUrl+ self.userData.id +'/user_details', { user_details: userDetails }, headerConfig)
         .then(function (response) {
         if(response.status == 200){
-            {self.props.removeUserDetail()}
+            {self.props.handleClose()}
+            {self.props.updateUserState(response.data)}
         }
         })
         .catch(function (error) {
-        if (error.response.status == 422) {
-            self.setState({ formErrors: error.response.data })
-        }
+            if (error.response.status == 422) {
+                self.setState({ formErrors: error.response.data })
+            }
         });
     }
 
 	render() {
         return (
-        <div className="Login">
-            <h1>User Detail</h1>
+        <div>
             <form onSubmit={this.handleSubmit}>
                 <FormGroup controlId="height" bsSize="large">
                     <FormLabel>Height (in cm.)</FormLabel>
@@ -102,11 +103,11 @@ class UserDetails extends React.Component {
                 <div className="ErrorMessage">
                     <FormErrors formErrors={this.state.formErrors} />
                 </div>
-                <div className="">
+                <div className="App">
                     <Button className="btn btn-md btn-success"  bsSize="large" disabled={!this.state.formValid} type="submit">
                         Save
                     </Button>
-                    <Button className="btn btn-md btn-danger" bsSize="large" onClick={this.props.removeUserDetail} type="button">
+                    <Button className="btn btn-md btn-danger" bsSize="large" onClick={this.props.handleClose} type="button">
                         Cancel
                     </Button>
                 </div>

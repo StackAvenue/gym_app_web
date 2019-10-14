@@ -1,9 +1,12 @@
 import React from 'react';
 import { Form, Button, FormGroup, FormControl, FormLabel, HelpBlock } from "react-bootstrap";
 import { Link, withRouter } from "react-router-dom";
+import { Redirect } from 'react-router';
 import Dashboard from './Dashboard';
 import FormErrors from './FormErrors';
 import "./sign.css";
+import axios from "axios";
+import { login } from './utils/API';
 
 class Signin extends React.Component { 
   constructor(props) { 
@@ -54,9 +57,19 @@ class Signin extends React.Component {
     );
   }
 
+  componentDidMount() {
+    console.log('at componentDidMount')
+    const userData = JSON.parse(localStorage.getItem("userData"));
+
+    if (userData !== "undefined" && userData !== null) {
+      return this.props.history.push("/");
+    } else {
+      return null;
+    }
+  }
+
   handleSubmit = event => {
     event.preventDefault();
-    const axios = require('axios');
     var apiBaseUrl = "http://localhost:3000/api/users";
     var self = this;
     const headerConfig = {
@@ -69,8 +82,8 @@ class Signin extends React.Component {
      .then(function (response) {
        console.log(response);
        if(response.status == 200){
-         localStorage.setItem("userData", JSON.stringify(response.data));
-         // self.props.history.push("/");
+         localStorage.setItem("userData", JSON.stringify(response.data.user));
+        //  self.props.history.push('/');
          window.location.reload();
        }
      })
