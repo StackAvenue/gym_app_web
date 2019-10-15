@@ -20,11 +20,13 @@ class Dashboard extends Component {
         showAddBtn: false,
         userDetails: [],
         allUsers: [],
+        trainerAllUsersList: [],
         roleLists: [],
         trainerLists: [],
         role: '',
         userDetailsOpen: true,
         userOpen: false,
+        trainerUsersOpen: false,
         isModalOpen: false,
         isModalClose: true,
         adminColumns: [{
@@ -37,17 +39,34 @@ class Dashboard extends Component {
             dataField: 'created_at',
             text: 'Created Date'
           }, {
-            dataField: 'role',
-            text: 'User Role'
-          }, {
-            dataField: 'action',
-            text: 'Action'
-          }, {
             dataField: 'assign_role',
             text: 'Assign Role'
           }, {
             dataField: 'assign_trainer',
             text: 'Assign Trainer'
+        }, {
+            dataField: 'action',
+            text: 'Action'
+        }],
+
+        trainerColumns: [{
+            dataField: 'first_name',
+            text: 'User Name'
+          }, {
+            dataField: 'email',
+            text: 'Email'
+          }, {
+            dataField: 'created_at',
+            text: 'Created Date'
+          }, {
+            dataField: 'role_name',
+            text: 'Role'
+          }, {
+            dataField: 'trainer_name',
+            text: 'Trainer Name'
+        }, {
+            dataField: 'action',
+            text: 'Action'
         }],
 
         clientColumns: [{
@@ -69,18 +88,31 @@ class Dashboard extends Component {
     };
 
     toggleCollapse = () => {
-        this.setState({
-            userOpen: this.state.userOpen ? false : true ,
-            userDetailsOpen: this.state.userDetailsOpen ? false : true
-         });
+        this.setState({ isOpen: !this.state.isOpen });
+    }
+
+    trainerPannel = () => {
+        this.setState({ 
+            userOpen: false,
+            userDetailsOpen: false,
+            trainerUsersOpen: true  
+        })
+    }
+
+    adminPannel = () => {
+        this.setState({ 
+            userOpen: true,
+            userDetailsOpen: false,
+            trainerUsersOpen: false  
+        })
     }
 
     adminPanelBtn = () => {
-        return <Button className="btn btn-md btn-primary" onClick={this.toggleCollapse}>Admin Panel</Button>
+        return <Button className="btn btn-md btn-primary" onClick={this.adminPannel}>Admin Panel</Button>
     }
     
     trainerPanelBtn = () => {
-        return <Button className="btn btn-md btn-primary" onClick={this.toggleCollapse}>Trainer Panel</Button>
+        return <Button className="btn btn-md btn-primary" onClick={this.trainerPannel}>Trainer Panel</Button>
     }
 
     componentDidMount() {
@@ -96,7 +128,8 @@ class Dashboard extends Component {
                     allUsers: response.data.all_users,
                     role: response.data.role,
                     roleLists: response.data.role_lists,
-                    trainerLists: response.data.trainer_lists
+                    trainerLists: response.data.trainer_lists,
+                    trainerAllUsersList: response.data.trainer_user_list
                 })
             }
         })
@@ -107,7 +140,6 @@ class Dashboard extends Component {
 
     logout = () => {
         localStorage.removeItem("userData");
-        // this.props.history.push("/login");
         window.location.reload();
     };
 
@@ -119,7 +151,8 @@ class Dashboard extends Component {
         this.setState({
             showAddBtn: true,
             userOpen : false,
-            userDetailsOpen: true
+            userDetailsOpen: true,
+            trainerUsersOpen: false
         });
     }
 
@@ -142,6 +175,10 @@ class Dashboard extends Component {
     
     allUserTable = () => {
         return <CustomTable updateTableBody={this.updateTableBody} header={this.state.adminColumns} tBodyData={this.state.allUsers} roleLists={this.state.roleLists} model={'users'} trainerLists={this.state.trainerLists} />
+    }
+    
+    allTrainerUserTable = () => {
+        return <CustomTable header={this.state.trainerColumns} tBodyData={this.state.trainerAllUsersList} pannel={'trainer'} />
     }
 
     updateTableBody = (idx, data) => {
@@ -182,7 +219,7 @@ class Dashboard extends Component {
                         <MDBIcon icon="user" />
                         </MDBDropdownToggle>
                         <MDBDropdownMenu className="dropdown-default">
-                        <Link onClick={this.logout}  color="success">Logout</Link>
+                        <Link onClick={this.logout} to="/" color="success">Logout</Link>
                         </MDBDropdownMenu>
                     </MDBDropdown>
                     </MDBNavItem>
@@ -190,7 +227,7 @@ class Dashboard extends Component {
                 </MDBCollapse>
             </MDBNavbar>
             
-            <Button className="btn btn-md btn-primary" onClick={this.onButtonClick}>Add User Details</Button>
+            <Button className="btn btn-md btn-primary" onClick={this.onButtonClick}>Add My Details</Button>
             {this.state.role == 'admin' ? this.adminPanelBtn() : null}
             {this.state.role == 'trainer' ? this.trainerPanelBtn() : null}
             {/* {this.state.showAddBtn ? <UserDetails removeUserDetail={this.removeUserDetailForm} updateUserState={this.updateUserState} /> : null} */}
@@ -198,6 +235,7 @@ class Dashboard extends Component {
             
             { this.state.userDetailsOpen && this.state.userDetails.length > 0 ? this.userDetailsTable() : null }
             { this.state.userOpen && this.state.allUsers.length > 0 ? this.allUserTable() : null }
+            { this.state.trainerUsersOpen && this.state.trainerAllUsersList.length > 0 ? this.allTrainerUserTable() : null }
             </div>
         </Router>
         );

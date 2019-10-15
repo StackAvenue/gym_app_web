@@ -9,8 +9,8 @@ class TableHeader extends React.Component {
             <thead>
                 <tr>
                     <th>Sr.No.</th>
-                    {this.props.headers.map((header) => {
-                        return <th>{header.text}</th>
+                    {this.props.headers.map((header, i) => {
+                        return <th key={i}>{header.text}</th>
                     })}
                 </tr>
             </thead>
