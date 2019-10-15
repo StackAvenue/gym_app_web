@@ -4,7 +4,6 @@ import { withRouter } from "react-router-dom";
 import FormErrors from './FormErrors';
 import "./sign.css";
 
-
 class UserDetails extends React.Component {
     constructor(props) { 
         super(props);

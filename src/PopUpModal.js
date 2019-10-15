@@ -1,9 +1,6 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal'
 import UserDetails from './UserDetails';
-import { Button, FormControl, Form } from 'react-bootstrap'
-import { MDBNavbar, MDBNavbarNav, MDBNavItem, MDBNavbarToggler, MDBCollapse, MDBDropdown,
-MDBDropdownToggle, MDBDropdownMenu, MDBIcon } from "mdbreact";
 
 class PopUpModal extends React.Component {
     constructor(props){
